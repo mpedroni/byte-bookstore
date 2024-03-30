@@ -8,11 +8,14 @@ import java.time.LocalDateTime;
 @Table("authors")
 public class Author {
     @Id
-    private final Long id;
-    private final String name;
-    private final String email;
-    private final String description;
-    private final LocalDateTime createdAt;
+    private Long id;
+    private String name;
+    private String email;
+    private String description;
+    private LocalDateTime createdAt;
+
+    @Deprecated
+    public Author() {}
 
     private Author(Long id, String name, String email, String description, LocalDateTime createdAt) {
         this.id = id;
