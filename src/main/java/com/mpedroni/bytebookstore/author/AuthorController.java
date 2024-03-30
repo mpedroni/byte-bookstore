@@ -22,7 +22,7 @@ public class AuthorController {
     public ResponseEntity<?> create(@Valid @RequestBody CreateAuthorRequest request) {
         var author = authorRepository.save(
                 Author.newAuthor(
-                        "",
+                        request.name(),
                         request.email(),
                         request.description()
                 )
