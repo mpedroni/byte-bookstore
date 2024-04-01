@@ -11,7 +11,7 @@ public record CreateAuthorRequest(
     String email,
 
     @NotBlank
-    @Size(max = 400)
+    @Size(max = 400, message = "must have at most 400 characters")
     String description
 ) {
 }

@@ -27,6 +27,14 @@ public class Author {
         selfValidate();
     }
 
+
+    /**
+     * Factory method to create a new Author instance
+     * @param name The name of the author. Must not be null or empty
+     * @param email The email of the author. Must not be null or empty and must be a well-formed email address. Cannot be duplicated
+     * @param description A brief description of the author. Must not be null or empty and must have at most 400 characters
+     * @return A new Author instance
+     */
     public static Author newAuthor(String name, String email, String description) {
         return new Author(null, name, email, description, LocalDateTime.now());
     }
@@ -42,6 +50,10 @@ public class Author {
 
         if (description == null || description.isBlank()) {
             throw new IllegalArgumentException("'description' cannot be null or empty");
+        }
+
+        if (description.length() > 400) {
+            throw new IllegalArgumentException("'description' must have at most 400 characters");
         }
 
         if (!email.matches("^(.+)@(.+)$")) {

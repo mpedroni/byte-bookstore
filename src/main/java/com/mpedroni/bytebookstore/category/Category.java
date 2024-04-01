@@ -1,5 +1,6 @@
 package com.mpedroni.bytebookstore.category;
 
+import jakarta.validation.constraints.NotEmpty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -16,7 +17,14 @@ public class Category {
         selfValidate();
     }
 
-    public static Category newCategory(String name) {
+
+    /**
+     * Factory method to create a new Category instance
+     *
+     * @param name The name of the category. Must not be null or empty and cannot be duplicated
+     * @return A new Category instance
+     */
+    public static Category newCategory(@NotEmpty String name) {
         return new Category(null, name);
     }
 
