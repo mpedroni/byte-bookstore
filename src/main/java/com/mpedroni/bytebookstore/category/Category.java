@@ -12,10 +12,18 @@ public class Category {
     private Category(Long id, String name) {
         this.id = id;
         this.name = name;
+
+        selfValidate();
     }
 
     public static Category newCategory(String name) {
         return new Category(null, name);
+    }
+
+    private void selfValidate() {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("'name' cannot be null or empty");
+        }
     }
 
     public Long id() {
