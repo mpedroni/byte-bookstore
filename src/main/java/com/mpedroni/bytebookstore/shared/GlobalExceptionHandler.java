@@ -8,6 +8,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.HashMap;
+import java.util.List;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -18,10 +19,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         var body = new HashMap<>();
         body.put("timestamp", System.currentTimeMillis());
-        body.put("status", status.value());
         body.put("error", status.getReasonPhrase());
+        body.put("code", status.value());
         body.put("exception", ex.getClass().getSimpleName());
-        body.put("message", ex.getMessage());
+        body.put("messages", List.of(ex.getMessage()));
 
         return handleExceptionInternal(
                 ex,
@@ -33,17 +34,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode _status, WebRequest request) {
+        var status = HttpStatus.BAD_REQUEST;
+
         var errors = ex.getBindingResult().getFieldErrors().stream()
                 .map(error -> "'%s' %s".formatted(error.getField(), error.getDefaultMessage()))
                 .toList();
 
         var body = new HashMap<>();
         body.put("timestamp", System.currentTimeMillis());
-        body.put("status", status.value());
-        body.put("error", status.value());
+        body.put("error", status.getReasonPhrase());
+        body.put("code", status.value());
         body.put("exception", ex.getClass().getSimpleName());
-        body.put("errors", errors);
+        body.put("messages", errors);
 
         return handleExceptionInternal(
                 ex,
