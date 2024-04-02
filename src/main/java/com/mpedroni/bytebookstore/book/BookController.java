@@ -13,7 +13,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/books")
-// class's intrinsic load: 6
+// class's intrinsic load: 5
 public class BookController {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
@@ -27,10 +27,8 @@ public class BookController {
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody CreateBookRequest request) {
-        var author = authorRepository.findById(request.authorId())
-                .orElseThrow(() -> new IllegalArgumentException("Author not found"));
-        var category = categoryRepository.findById(request.categoryId())
-                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+        var author = authorRepository.findById(request.authorId()).orElseThrow();
+        var category = categoryRepository.findById(request.categoryId()).orElseThrow();
 
         var book = bookRepository.save(
                 Book.newBook(
