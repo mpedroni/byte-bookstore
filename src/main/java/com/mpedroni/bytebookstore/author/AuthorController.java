@@ -11,8 +11,8 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/authors")
-/**
- * class's intrinsic load: 4
+/*
+ * class's intrinsic load: 3
  */
 public class AuthorController {
     private final AuthorRepository authorRepository;
@@ -23,10 +23,6 @@ public class AuthorController {
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody CreateAuthorRequest request) {
-        authorRepository.findByEmail(request.email()).ifPresent(author -> {
-            throw new IllegalArgumentException("Author with email '%s' already exists".formatted(request.email()));
-        });
-
         var author = authorRepository.save(
                 Author.newAuthor(
                         request.name(),

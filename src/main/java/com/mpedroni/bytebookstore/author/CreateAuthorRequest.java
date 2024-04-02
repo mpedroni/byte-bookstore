@@ -1,5 +1,6 @@
 package com.mpedroni.bytebookstore.author;
 
+import com.mpedroni.bytebookstore.shared.validators.Unique;
 import jakarta.validation.constraints.*;
 
 public record CreateAuthorRequest(
@@ -8,6 +9,7 @@ public record CreateAuthorRequest(
 
     @NotBlank
     @Email(regexp = ".+@.+\\..+")
+    @Unique(entity = Author.class, field = "email")
     String email,
 
     @NotBlank

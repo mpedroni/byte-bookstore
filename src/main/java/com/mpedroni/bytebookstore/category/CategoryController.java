@@ -20,10 +20,6 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody CreateCategoryRequest request) {
-        categoryRepository.findByName(request.name()).ifPresent(category -> {
-            throw new IllegalArgumentException("Category with name '%s' already exists".formatted(request.name()));
-        });
-
         var category = categoryRepository.save(
                 Category.newCategory(request.name())
         );
