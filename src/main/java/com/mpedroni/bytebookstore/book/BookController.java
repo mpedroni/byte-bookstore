@@ -13,6 +13,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/books")
+// class's intrinsic load: 6
 public class BookController {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
