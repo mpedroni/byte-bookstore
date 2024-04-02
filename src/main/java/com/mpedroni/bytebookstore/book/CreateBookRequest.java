@@ -2,8 +2,8 @@ package com.mpedroni.bytebookstore.book;
 
 import com.mpedroni.bytebookstore.author.Author;
 import com.mpedroni.bytebookstore.category.Category;
-import com.mpedroni.bytebookstore.shared.validators.ExistsById;
-import com.mpedroni.bytebookstore.shared.validators.Unique;
+import com.mpedroni.bytebookstore.shared.validators.exists.ExistsById;
+import com.mpedroni.bytebookstore.shared.validators.unique.Unique;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;

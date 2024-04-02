@@ -1,6 +1,6 @@
 package com.mpedroni.bytebookstore.author;
 
-import com.mpedroni.bytebookstore.shared.validators.Unique;
+import com.mpedroni.bytebookstore.shared.validators.unique.Unique;
 import jakarta.validation.constraints.*;
 
 public record CreateAuthorRequest(

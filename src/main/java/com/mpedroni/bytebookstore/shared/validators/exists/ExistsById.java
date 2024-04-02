@@ -1,4 +1,4 @@
-package com.mpedroni.bytebookstore.shared.validators;
+package com.mpedroni.bytebookstore.shared.validators.exists;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
