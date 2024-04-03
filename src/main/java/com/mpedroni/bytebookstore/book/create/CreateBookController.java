@@ -1,24 +1,27 @@
-package com.mpedroni.bytebookstore.book;
+package com.mpedroni.bytebookstore.book.create;
 
 import com.mpedroni.bytebookstore.author.AuthorRepository;
+import com.mpedroni.bytebookstore.book.Book;
+import com.mpedroni.bytebookstore.book.BookRepository;
 import com.mpedroni.bytebookstore.category.CategoryRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
-import java.util.List;
-import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/books")
-// class's intrinsic load: 6
-public class BookController {
+// class's intrinsic load: 5
+public class CreateBookController {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final CategoryRepository categoryRepository;
 
-    public BookController(BookRepository bookRepository, AuthorRepository authorRepository, CategoryRepository categoryRepository) {
+    public CreateBookController(BookRepository bookRepository, AuthorRepository authorRepository, CategoryRepository categoryRepository) {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.categoryRepository = categoryRepository;
@@ -46,14 +49,5 @@ public class BookController {
         var location = URI.create("/books/" + book.id());
 
         return ResponseEntity.created(location).build();
-    }
-
-    @GetMapping
-    public ResponseEntity<List<BookListResponse>> list() {
-        var books = StreamSupport.stream(bookRepository.findAll().spliterator(), false)
-                .map(book -> new BookListResponse(book.id(), book.title()))
-                .toList();
-
-        return ResponseEntity.ok(books);
     }
 }

@@ -1,6 +1,7 @@
-package com.mpedroni.bytebookstore.book;
+package com.mpedroni.bytebookstore.book.create;
 
 import com.mpedroni.bytebookstore.author.Author;
+import com.mpedroni.bytebookstore.book.Book;
 import com.mpedroni.bytebookstore.category.Category;
 import com.mpedroni.bytebookstore.shared.validators.exists.ExistsById;
 import com.mpedroni.bytebookstore.shared.validators.unique.Unique;
