@@ -9,6 +9,10 @@ public class Country {
     private Long id;
     private String name;
 
+    @Deprecated
+    public Country() {
+    }
+
     private Country(Long id, String name) {
         this.id = id;
         this.name = name;
@@ -20,6 +24,10 @@ public class Country {
 
     public Long id() {
         return id;
+    }
+
+    public String name() {
+        return name;
     }
 
     @Override

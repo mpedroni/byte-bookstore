@@ -16,6 +16,10 @@ public class State {
     @Column("country_id")
     private AggregateReference<Country, Long> country;
 
+    @Deprecated
+    public State() {
+    }
+
     private State(Long id, String name, Country country) {
         this.id = id;
         this.name = name;
@@ -28,6 +32,10 @@ public class State {
 
     public Long id() {
         return id;
+    }
+
+    public String name() {
+        return name;
     }
 
     @Override
