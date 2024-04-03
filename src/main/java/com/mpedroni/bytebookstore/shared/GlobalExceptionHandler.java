@@ -14,26 +14,6 @@ import java.util.List;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Object> illegalArgumentException(IllegalArgumentException ex, WebRequest request) {
-        var status = HttpStatus.CONFLICT;
-
-        var body = new HashMap<>();
-        body.put("timestamp", System.currentTimeMillis());
-        body.put("error", status.getReasonPhrase());
-        body.put("code", status.value());
-        body.put("exception", ex.getClass().getSimpleName());
-        body.put("messages", List.of(ex.getMessage()));
-
-        return handleExceptionInternal(
-                ex,
-                body,
-                new HttpHeaders(),
-                HttpStatus.BAD_REQUEST,
-                request
-        );
-    }
-
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode _status, WebRequest request) {
         var status = HttpStatus.BAD_REQUEST;
@@ -42,12 +22,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .map(error -> "'%s' %s".formatted(error.getField(), error.getDefaultMessage()))
                 .toList();
 
-        var body = new HashMap<>();
-        body.put("timestamp", System.currentTimeMillis());
-        body.put("error", status.getReasonPhrase());
-        body.put("code", status.value());
-        body.put("exception", ex.getClass().getSimpleName());
-        body.put("messages", errors);
+        var body = ErrorResponseBodyBuilder.with(status, ex, errors);
 
         return handleExceptionInternal(
                 ex,
@@ -62,12 +37,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode _status, WebRequest request) {
         var status = HttpStatus.BAD_REQUEST;
 
-        var body = new HashMap<>();
-        body.put("timestamp", System.currentTimeMillis());
-        body.put("error", status.getReasonPhrase());
-        body.put("code", status.value());
-        body.put("exception", ex.getClass().getSimpleName());
-        body.put("messages", List.of(ex.getCause().getMessage()));
+        var body = ErrorResponseBodyBuilder.with(status, ex, List.of(ex.getMessage()));
 
         return handleExceptionInternal(
                 ex,

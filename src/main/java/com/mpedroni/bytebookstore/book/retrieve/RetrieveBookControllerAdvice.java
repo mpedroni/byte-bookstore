@@ -1,6 +1,7 @@
 package com.mpedroni.bytebookstore.book.retrieve;
 
 import com.mpedroni.bytebookstore.book.exception.BookNotFoundException;
+import com.mpedroni.bytebookstore.shared.ErrorResponseBodyBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +18,7 @@ public class RetrieveBookControllerAdvice extends ResponseEntityExceptionHandler
     public ResponseEntity<?> handleBookNotFoundException(BookNotFoundException ex, WebRequest request) {
         var status = HttpStatus.NOT_FOUND;
 
-        var body = new HashMap<>();
-        body.put("timestamp", System.currentTimeMillis());
-        body.put("error", status.getReasonPhrase());
-        body.put("code", status.value());
-        body.put("exception", ex.getClass().getSimpleName());
-        body.put("message", ex.getMessage());
+        var body = ErrorResponseBodyBuilder.with(status, ex, ex.getMessage());
 
         return handleExceptionInternal(
                 ex,
