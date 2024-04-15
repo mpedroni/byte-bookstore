@@ -38,6 +38,10 @@ public class State {
         return name;
     }
 
+    public Long countryId() {
+        return country.getId();
+    }
+
     @Override
     public String toString() {
         return "State{" +

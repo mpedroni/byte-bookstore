@@ -10,6 +10,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Table("books")
 public class Book {
@@ -130,6 +131,20 @@ public class Book {
 
     private void selfValidate() {
         BookValidator.validate(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if (!(o instanceof Book other)) return false;
+
+        return id.equals(other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 
     @Override

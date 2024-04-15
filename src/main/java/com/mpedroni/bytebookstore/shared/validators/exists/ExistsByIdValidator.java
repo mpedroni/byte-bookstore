@@ -22,6 +22,10 @@ public class ExistsByIdValidator implements ConstraintValidator<ExistsById, Long
 
     @Override
     public boolean isValid(Long id, ConstraintValidatorContext constraintValidatorContext) {
+        if (id == null) {
+            return true;
+        }
+
         var table = EntityTableNameResolver.resolveFor(entity);
 
         var query = "SELECT id FROM %s WHERE id = ? LIMIT 1".formatted(table);
