@@ -39,6 +39,8 @@ public class Order {
 
     private String cep;
 
+    private BigDecimal total;
+
     @MappedCollection(idColumn = "order_id")
     private Set<OrderItem> items;
 
@@ -58,6 +60,7 @@ public class Order {
             AggregateReference<State, Long> state,
             String phone,
             String cep,
+            BigDecimal total,
             Set<OrderItem> items
     ) {
         this.id = id;
@@ -72,9 +75,12 @@ public class Order {
         this.state = state;
         this.phone = phone;
         this.cep = cep;
+        this.total = total;
         this.items = items;
 
         items.forEach(item -> item.withOrder(this));
+
+        selfValidate();
     }
 
     public static Order newOrder(
@@ -85,10 +91,11 @@ public class Order {
             String address,
             String complement,
             String city,
-            Country country,
-            State state,
+            Long countryId,
+            Long stateId,
             String phone,
             String cep,
+            BigDecimal total,
             Set<OrderItem> items
     ) {
         return new Order(
@@ -100,17 +107,26 @@ public class Order {
                 address,
                 complement,
                 city,
-                AggregateReference.to(country.id()),
-                state != null ? AggregateReference.to(state.id()) : null,
+                AggregateReference.to(countryId),
+                stateId != null ? AggregateReference.to(stateId) : null,
                 phone,
                 cep,
+                total,
                 items
         );
     }
 
     public BigDecimal total() {
-        return items.stream()
+        return total;
+    }
+
+    private void selfValidate() {
+        var itemsTotal = items.stream()
                 .map(item -> item.unitPrice().multiply(BigDecimal.valueOf(item.quantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if (total().compareTo(itemsTotal) != 0) {
+            throw new IllegalArgumentException("Cart total value does not match the sum of the items");
+        }
     }
 }

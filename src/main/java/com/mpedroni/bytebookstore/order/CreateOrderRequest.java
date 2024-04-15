@@ -10,6 +10,8 @@ import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public record CreateOrderRequest(
     @NotBlank
@@ -62,6 +64,17 @@ public record CreateOrderRequest(
             List<@Valid ChartItem> items
 
     ) {
+        public List<Long> bookIds() {
+            return items.stream().map(ChartItem::bookId).toList();
+        }
+
+        public Set<OrderItem> toDomainItems(List<Book> orderedBooks) {
+            var prices = orderedBooks.stream().collect(Collectors.toMap(Book::id, Book::price));
+
+            return this.items.stream()
+                    .map(item -> OrderItem.with(item.bookId(), item.quantity(), prices.get(item.bookId())))
+                    .collect(Collectors.toSet());
+        }
     }
 
     record ChartItem(
