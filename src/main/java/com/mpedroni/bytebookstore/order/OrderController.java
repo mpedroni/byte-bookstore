@@ -2,6 +2,7 @@ package com.mpedroni.bytebookstore.order;
 
 import com.mpedroni.bytebookstore.book.Book;
 import com.mpedroni.bytebookstore.book.BookRepository;
+import com.mpedroni.bytebookstore.coupon.CouponRepository;
 import jakarta.validation.Valid;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -17,11 +19,13 @@ public class OrderController {
     private final LocalizationConstraintsValidator locationValidator;
     private final BookRepository books;
     private final OrderRepository orders;
+    private final CouponRepository coupons;
 
-    public OrderController(LocalizationConstraintsValidator locationValidator, BookRepository books, OrderRepository orders) {
+    public OrderController(LocalizationConstraintsValidator locationValidator, BookRepository books, OrderRepository orders, CouponRepository coupons) {
         this.locationValidator = locationValidator;
         this.books = books;
         this.orders = orders;
+        this.coupons = coupons;
     }
 
     @PostMapping
@@ -51,6 +55,16 @@ public class OrderController {
                 request.chart().total(),
                 request.chart().toDomainItems(orderedBooks)
         );
+
+        if (request.couponCode() != null) {
+            var coupon = coupons.findByCode(request.couponCode()).orElseThrow(() -> new IllegalArgumentException("Coupon not found"));
+
+            if (coupon.expiresAt().isBefore(LocalDateTime.now())) {
+                throw new IllegalArgumentException("Coupon expired");
+            }
+
+            order.apply(coupon);
+        }
 
         orders.save(order);
     }

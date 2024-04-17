@@ -24,6 +24,22 @@ public class Coupon {
         return new Coupon(null, code, discountInPercent, expirationDate);
     }
 
+    public Long id() {
+        return id;
+    }
+
+    public String code() {
+        return code;
+    }
+
+    public Integer discountInPercent() {
+        return discountInPercent;
+    }
+
+    public LocalDateTime expiresAt() {
+        return expiresAt;
+    }
+
     @Override
     public String toString() {
         return "Coupon{" +

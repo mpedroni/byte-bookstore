@@ -1,12 +1,15 @@
 package com.mpedroni.bytebookstore.order;
 
+import com.mpedroni.bytebookstore.coupon.Coupon;
 import com.mpedroni.bytebookstore.localization.country.Country;
 import com.mpedroni.bytebookstore.localization.state.State;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -40,6 +43,12 @@ public class Order {
     private String cep;
 
     private BigDecimal total;
+
+    @Column("coupon_id")
+    private AggregateReference<Coupon, Long> couponRef;
+
+    @Transient
+    private Coupon coupon;
 
     @MappedCollection(idColumn = "order_id")
     private Set<OrderItem> items;
@@ -116,8 +125,24 @@ public class Order {
         );
     }
 
+    public Long id() {
+        return id;
+    }
+
     public BigDecimal total() {
-        return total;
+        if (coupon == null)
+            return total;
+
+        var discount = total.multiply(BigDecimal.valueOf(coupon.discountInPercent() / 100.0));
+        return total.subtract(discount);
+    }
+
+    public void apply(Coupon coupon) {
+        Assert.isNull(id, "Coupon can only be applied to a new order");
+        Assert.isNull(this.coupon, "Coupon already applied to this order");
+        this.coupon = coupon;
+        this.couponRef = AggregateReference.to(coupon.id());
+        selfValidate();
     }
 
     private void selfValidate() {
@@ -125,8 +150,34 @@ public class Order {
                 .map(item -> item.unitPrice().multiply(BigDecimal.valueOf(item.quantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        if (coupon != null) {
+            var discount = itemsTotal.multiply(BigDecimal.valueOf(coupon.discountInPercent() / 100.0));
+            itemsTotal = itemsTotal.subtract(discount);
+        }
+
         if (total().compareTo(itemsTotal) != 0) {
             throw new IllegalArgumentException("Cart total value does not match the sum of the items");
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", document='" + document + '\'' +
+                ", address='" + address + '\'' +
+                ", complement='" + complement + '\'' +
+                ", city='" + city + '\'' +
+                ", country=" + country +
+                ", state=" + state +
+                ", phone='" + phone + '\'' +
+                ", cep='" + cep + '\'' +
+                ", total=" + total() +
+                ", coupon=" + coupon +
+                ", items=" + items +
+                '}';
     }
 }

@@ -75,7 +75,7 @@ public class OrderItem {
                 "bookId=" + bookId + ", " +
                 "quantity=" + quantity + ", " +
                 "unitPrice=" + unitPrice + ", " +
-                "order=" + order + '}';
+                "orderId=" + order.id() + '}';
     }
 
 }

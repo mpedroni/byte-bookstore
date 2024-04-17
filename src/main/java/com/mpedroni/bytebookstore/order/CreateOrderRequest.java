@@ -50,6 +50,8 @@ public record CreateOrderRequest(
     @NotBlank
     String cep,
 
+    String couponCode,
+
     @NotNull
     @Valid
     Chart chart
