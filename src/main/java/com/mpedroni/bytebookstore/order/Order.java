@@ -12,6 +12,9 @@ import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 @Table("orders")
@@ -19,7 +22,7 @@ public class Order {
     @Id
     private Long id;
     private String email;
-    
+
     private String firstName;
 
     private String lastName;
@@ -37,7 +40,7 @@ public class Order {
 
     @Column("state_id")
     private AggregateReference<State, Long> state;
-    
+
     private String phone;
 
     private String cep;
@@ -54,7 +57,8 @@ public class Order {
     private Set<OrderItem> items;
 
     @Deprecated
-    public Order() {}
+    protected Order() {
+    }
 
     private Order(
             Long id,
@@ -86,8 +90,6 @@ public class Order {
         this.cep = cep;
         this.total = total;
         this.items = items;
-
-        items.forEach(item -> item.withOrder(this));
 
         selfValidate();
     }
@@ -129,6 +131,62 @@ public class Order {
         return id;
     }
 
+    public String email() {
+        return email;
+    }
+
+    public String firstName() {
+        return firstName;
+    }
+
+    public String lastName() {
+        return lastName;
+    }
+
+    public String document() {
+        return document;
+    }
+
+    public String address() {
+        return address;
+    }
+
+    public String complement() {
+        return complement;
+    }
+
+    public String city() {
+        return city;
+    }
+
+    public Long countryId() {
+        return country.getId();
+    }
+
+    public Long stateId() {
+        return state != null ? state.getId() : null;
+    }
+
+    public String phone() {
+        return phone;
+    }
+
+    public String cep() {
+        return cep;
+    }
+
+    public BigDecimal totalWithoutDiscount() {
+        return total;
+    }
+
+    public Optional<Long> couponId() {
+        return couponRef != null ? Optional.ofNullable(couponRef.getId()) : Optional.empty();
+    }
+
+    public Set<OrderItem> items() {
+        return Collections.unmodifiableSet(items);
+    }
+
     public BigDecimal total() {
         if (coupon == null)
             return total;
@@ -138,7 +196,11 @@ public class Order {
     }
 
     public void apply(Coupon coupon) {
-        Assert.isNull(id, "Coupon can only be applied to a new order");
+        Assert.notNull(coupon, "Coupon cannot be null");
+
+        var isSameCoupon = couponRef != null && Objects.equals(couponRef.getId(), coupon.id());
+        Assert.isTrue(id == null || isSameCoupon, "Coupon can only be applied to a new order");
+
         Assert.isNull(this.coupon, "Coupon already applied to this order");
         this.coupon = coupon;
         this.couponRef = AggregateReference.to(coupon.id());

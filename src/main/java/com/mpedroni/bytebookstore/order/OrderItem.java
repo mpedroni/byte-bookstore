@@ -8,29 +8,26 @@ import java.util.Objects;
 
 @Table("order_items")
 public class OrderItem {
-    private final Long bookId;
-    private final Integer quantity;
+    private Long bookId;
+    private Integer quantity;
 
-    private final BigDecimal unitPrice;
+    private BigDecimal unitPrice;
 
-    @Transient
-    private Order order;
+    @Deprecated
+    protected OrderItem() {}
 
     private OrderItem(
             Long bookId,
             Integer quantity,
-            BigDecimal unitPrice,
-            Order order
-
+            BigDecimal unitPrice
     ) {
         this.bookId = bookId;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
-        this.order = order;
     }
 
     public static OrderItem with(Long bookId, Integer quantity, BigDecimal unitPrice) {
-        return new OrderItem(bookId, quantity, unitPrice, null);
+        return new OrderItem(bookId, quantity, unitPrice);
     }
 
     public Long bookId() {
@@ -45,28 +42,18 @@ public class OrderItem {
         return unitPrice;
     }
 
-    @Transient
-    public Order order() {
-        return order;
-    }
-
-    public void withOrder(Order order) {
-        this.order = order;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
         var that = (OrderItem) obj;
         return Objects.equals(this.bookId, that.bookId) &&
-                Objects.equals(this.quantity, that.quantity) &&
-                Objects.equals(this.order, that.order);
+                Objects.equals(this.quantity, that.quantity);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(bookId, quantity, order);
+        return Objects.hash(bookId, quantity);
     }
 
     @Override
@@ -75,7 +62,7 @@ public class OrderItem {
                 "bookId=" + bookId + ", " +
                 "quantity=" + quantity + ", " +
                 "unitPrice=" + unitPrice + ", " +
-                "orderId=" + order.id() + '}';
+                '}';
     }
 
 }

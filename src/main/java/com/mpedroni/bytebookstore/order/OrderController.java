@@ -4,11 +4,9 @@ import com.mpedroni.bytebookstore.book.Book;
 import com.mpedroni.bytebookstore.book.BookRepository;
 import com.mpedroni.bytebookstore.coupon.CouponRepository;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,7 +28,6 @@ public class OrderController {
 
     @PostMapping
     @Transactional
-    
     public void create(@Valid @RequestBody CreateOrderRequest request) {
         locationValidator.validate(request.countryId(), request.stateId());
 
@@ -79,5 +76,12 @@ public class OrderController {
             var notFound = existentBooks.stream().filter(id -> !orderedBookIds.contains(id)).toList();
             throw new IllegalArgumentException("Books not found ids: %s".formatted(notFound));
         }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<FindOrderResponse> find(@PathVariable Long id) {
+        var order = orders.findById(id).orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+        return ResponseEntity.ok(FindOrderResponse.from(order));
     }
 }
