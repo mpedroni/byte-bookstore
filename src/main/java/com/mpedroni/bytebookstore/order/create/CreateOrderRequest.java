@@ -1,8 +1,9 @@
-package com.mpedroni.bytebookstore.order;
+package com.mpedroni.bytebookstore.order.create;
 
 import com.mpedroni.bytebookstore.book.Book;
 import com.mpedroni.bytebookstore.localization.country.Country;
 import com.mpedroni.bytebookstore.localization.state.State;
+import com.mpedroni.bytebookstore.order.OrderItem;
 import com.mpedroni.bytebookstore.shared.validators.document.Document;
 import com.mpedroni.bytebookstore.shared.validators.exists.ExistsById;
 import jakarta.validation.Valid;

@@ -1,25 +1,30 @@
-package com.mpedroni.bytebookstore.order;
+package com.mpedroni.bytebookstore.order.create;
 
 import com.mpedroni.bytebookstore.book.Book;
 import com.mpedroni.bytebookstore.book.BookRepository;
 import com.mpedroni.bytebookstore.coupon.CouponRepository;
+import com.mpedroni.bytebookstore.order.LocalizationConstraintsValidator;
+import com.mpedroni.bytebookstore.order.Order;
+import com.mpedroni.bytebookstore.order.OrderRepository;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
-public class OrderController {
+public class CreateOrderController {
     private final LocalizationConstraintsValidator locationValidator;
     private final BookRepository books;
     private final OrderRepository orders;
     private final CouponRepository coupons;
 
-    public OrderController(LocalizationConstraintsValidator locationValidator, BookRepository books, OrderRepository orders, CouponRepository coupons) {
+    public CreateOrderController(LocalizationConstraintsValidator locationValidator, BookRepository books, OrderRepository orders, CouponRepository coupons) {
         this.locationValidator = locationValidator;
         this.books = books;
         this.orders = orders;
@@ -36,7 +41,7 @@ public class OrderController {
 
         var orderedBooks = books.findAllByIds(bookIds);
         validateBooks(bookIds, orderedBooks);
-        
+
         var order = Order.newOrder(
                 request.email(),
                 request.firstName(),
@@ -67,21 +72,14 @@ public class OrderController {
     }
 
     private void validateBooks(List<Long> orderedIds, List<Book> existentBooks) {
-        
+
         if (existentBooks.size() != orderedIds.size()) {
-            
+
             var orderedBookIds = existentBooks.stream().map(Book::id).toList();
 
-            
+
             var notFound = existentBooks.stream().filter(id -> !orderedBookIds.contains(id)).toList();
             throw new IllegalArgumentException("Books not found ids: %s".formatted(notFound));
         }
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<FindOrderResponse> find(@PathVariable Long id) {
-        var order = orders.findById(id).orElseThrow(() -> new IllegalArgumentException("Order not found"));
-
-        return ResponseEntity.ok(FindOrderResponse.from(order));
     }
 }

@@ -1,4 +1,7 @@
-package com.mpedroni.bytebookstore.order;
+package com.mpedroni.bytebookstore.order.find;
+
+import com.mpedroni.bytebookstore.order.Order;
+import com.mpedroni.bytebookstore.order.OrderItem;
 
 import java.math.BigDecimal;
 import java.util.List;
