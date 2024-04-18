@@ -1,5 +1,6 @@
 package com.mpedroni.bytebookstore.order.find;
 
+import com.mpedroni.bytebookstore.order.OrderNotFoundException;
 import com.mpedroni.bytebookstore.order.OrderRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,7 @@ public class FindOrderController {
 
     @GetMapping("/{id}")
     public ResponseEntity<FindOrderResponse> find(@PathVariable Long id) {
-        var order = orders.findById(id).orElseThrow(() -> new IllegalArgumentException("Order not found"));
+        var order = orders.findById(id).orElseThrow(() -> new OrderNotFoundException("Order with id %d not found".formatted(id)));
 
         return ResponseEntity.ok(FindOrderResponse.from(order));
     }
